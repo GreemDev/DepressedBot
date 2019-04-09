@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DepressedBot.Data.Objects;
+using DepressedBot.Data.Objects.EventArgs;
 using DepressedBot.Extensions;
 using Discord;
 using Console = Colorful.Console;
@@ -10,15 +11,15 @@ using LogMessage = Discord.LogMessage;
 
 namespace DepressedBot.Services
 {
-    public sealed class LoggingService : IService
+    [Service("Logging", "The main Service used to handle logging to the bot's console.")]
+    public sealed class LoggingService
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
-        internal async Task Log(LogMessage msg)
+        internal async Task Log(LogEventArgs args)
         {
-            if (msg.Message.Contains("handler is blocking")) return;
-            var m = Data.Objects.LogMessage.FromDiscordLogMessage(msg);
-            await Log(m.Severity, m.Source, m.Message, m.Exception);
+            await Log(args.LogMessage.Internal.Severity, args.LogMessage.Internal.Source,
+                args.LogMessage.Internal.Message, args.LogMessage.Internal.Exception);
         }
 
         internal async Task PrintVersion()

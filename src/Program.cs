@@ -7,7 +7,7 @@ namespace DepressedBot
     {
         public static async Task Main()
         {
-            Console.WriteLine("Hello World!");
+            await Discord.DepressedBot.StartAsync();
         }
     }
 }

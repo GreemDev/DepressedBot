@@ -8,7 +8,6 @@
   <ItemGroup>
     <Folder Include="Commands\Attributes\" />
     <Folder Include="Commands\Modules\" />
-    <Folder Include="Commands\TypeParsers\" />
   </ItemGroup>
 
   <ItemGroup>
