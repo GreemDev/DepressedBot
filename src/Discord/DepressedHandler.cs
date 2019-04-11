@@ -18,14 +18,17 @@ namespace DepressedBot.Discord
         private readonly DiscordSocketClient _client;
         private readonly CommandService _service;
         private readonly LoggingService _logger;
+        private readonly AutoResponseService _autoResponse;
 
         public DepressedHandler(DiscordSocketClient client,
             CommandService commandService,
-            LoggingService loggingService)
+            LoggingService loggingService,
+            AutoResponseService autoResponseService)
         {
             _client = client;
             _service = commandService;
             _logger = loggingService;
+            _autoResponse = autoResponseService;
         }
 
         public async Task InitializeAsync()
@@ -55,7 +58,7 @@ namespace DepressedBot.Discord
 
         private async Task HandleMessageReceivedAsync(MessageReceivedEventArgs args)
         {
-
+            await _autoResponse.OnMessageReceived(args);
         }
     }
 }

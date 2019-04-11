@@ -6,7 +6,6 @@ namespace DepressedBot.Extensions
 {
     public static class CommandExtensions
     {
-
         internal static void AddTypeParsers(this CommandService service)
         {
             service.AddTypeParser(new UserParser<SocketGuildUser>());

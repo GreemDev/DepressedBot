@@ -30,7 +30,6 @@ namespace DepressedBot.Data
             _bot = new BotConfig
             {
                 Token = "token here",
-                WelcomeApiKey = "",
                 CommandPrefix = "$",
                 Owner = 0,
                 Game = "in DepressedBot V2 Code!",
@@ -38,15 +37,12 @@ namespace DepressedBot.Data
                 SuccessEmbedColor = 0x7000FB,
                 ErrorEmbedColor = 0xFF0000,
                 LogAllCommands = true,
-                BlacklistedServerOwners = new ulong[] { }
             };
             File.WriteAllText(ConfigFile,
                 JsonConvert.SerializeObject(_bot, Formatting.Indented));
         }
 
         public static string Token => _bot.Token;
-
-        public static string WelcomeApiKey => _bot.WelcomeApiKey;
 
         public static string CommandPrefix => _bot.CommandPrefix;
 
@@ -63,12 +59,9 @@ namespace DepressedBot.Data
         public static bool LogAllCommands => _bot.LogAllCommands;
 
 
-        public static ulong[] BlacklistedOwners => _bot.BlacklistedServerOwners;
-
         private struct BotConfig
         {
             public string Token;
-            public string WelcomeApiKey;
             public string CommandPrefix;
             public ulong Owner;
             public string Game;
@@ -76,7 +69,6 @@ namespace DepressedBot.Data
             public uint SuccessEmbedColor;
             public uint ErrorEmbedColor;
             public bool LogAllCommands;
-            public ulong[] BlacklistedServerOwners;
         }
     }
 }

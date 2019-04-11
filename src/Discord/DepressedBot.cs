@@ -60,6 +60,7 @@ namespace DepressedBot.Discord
         {
             Console.Title = "DepressedBot";
             Console.CursorVisible = false;
+            await AutoResponses.CreateIfNotExists();
             if (!Directory.Exists("storage"))
             {
                 await _logger.Log(LogSeverity.Critical, LogSource.DepressedBot,
