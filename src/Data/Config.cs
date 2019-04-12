@@ -58,6 +58,8 @@ namespace DepressedBot.Data
 
         public static bool LogAllCommands => _bot.LogAllCommands;
 
+        public static ulong[] IgnoredCategoryIds => _bot.IgnoredCategoryIds;
+
 
         private struct BotConfig
         {
@@ -69,6 +71,7 @@ namespace DepressedBot.Data
             public uint SuccessEmbedColor;
             public uint ErrorEmbedColor;
             public bool LogAllCommands;
+            public ulong[] IgnoredCategoryIds;
         }
     }
 }

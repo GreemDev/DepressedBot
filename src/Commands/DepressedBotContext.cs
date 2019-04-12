@@ -40,9 +40,9 @@ namespace DepressedBot.Commands
         public EmbedBuilder CreateEmbedBuilder(string content = null) => new EmbedBuilder()
             .WithSuccessColor().WithAuthor(User).WithDescription(content ?? string.Empty);
 
-        public Task ReplyAsync(string content) => Channel.SendMessageAsync(content);
-        public Task ReplyAsync(Embed embed) => embed.SendToAsync(Channel);
-        public Task ReplyAsync(EmbedBuilder embed) => embed.SendToAsync(Channel);
+        public Task<IUserMessage> ReplyAsync(string content) => Channel.SendMessageAsync(content);
+        public Task<IUserMessage> ReplyAsync(Embed embed) => embed.SendToAsync(Channel);
+        public Task<IUserMessage> ReplyAsync(EmbedBuilder embed) => embed.SendToAsync(Channel);
         public Task ReactAsync(string unicode) => Message.AddReactionAsync(new Emoji(unicode));
     }
 }
