@@ -26,18 +26,21 @@ namespace DepressedBot.Discord
         private readonly LoggingService _logger;
         private readonly AutoResponseService _autoResponse;
         private readonly DadService _dad;
+        private readonly ReactionService _reaction;
 
         public DepressedHandler(DiscordSocketClient client,
             CommandService commandService,
             LoggingService loggingService,
             AutoResponseService autoResponseService,
-            DadService dadService)
+            DadService dadService,
+            ReactionService reactionService)
         {
             _client = client;
             _service = commandService;
             _logger = loggingService;
             _autoResponse = autoResponseService;
             _dad = dadService;
+            _reaction = reactionService;
         }
 
         public async Task InitializeAsync()
@@ -53,35 +56,48 @@ namespace DepressedBot.Discord
 
             _client.MessageReceived += async (s) =>
             {
-                if (!(s is IUserMessage msg)) return;
-                if (msg.Author.IsBot || msg.Author.IsWebhook) return;
-                if (msg.Channel is IDMChannel)
+                if (!(s is SocketUserMessage msg)) return;
+                if (msg.Author.IsBot) return;
+                if (msg.Channel is IDMChannel dm)
                 {
-                    await msg.Channel.SendMessageAsync("I do not support commands via DM.");
+                    await dm.SendMessageAsync("I do not support commands via DM.");
                     return;
                 }
 
-                await HandleMessageReceivedAsync(new MessageReceivedEventArgs(s));
+                await HandleMessageReceivedAsync(new MessageReceivedEventArgs(msg));
             };
         }
 
-        private async Task HandleMessageReceivedAsync(MessageReceivedEventArgs args)
+        private Task HandleMessageReceivedAsync(MessageReceivedEventArgs args)
         {
-            await _autoResponse.OnMessageReceivedAsync(args);
-            await _dad.OnMessageReceivedAsync(args);
-            var prefixes = new[] {Config.CommandPrefix, $"<@{args.Context.Client.CurrentUser.Id}> "};
-            if (CommandUtilities.HasAnyPrefix(args.Message.Content, prefixes, StringComparison.OrdinalIgnoreCase, out _,
-                out var cmd))
+            _ = Task.Run(async () =>
             {
-                var sw = Stopwatch.StartNew();
-                var res = await _service.ExecuteAsync(cmd, args.Context, DepressedBot.ServiceProvider);
-                sw.Stop();
-                if (res is CommandNotFoundResult) return;
-                var targetCommand = _service.GetAllCommands()
-                                        .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd))
-                                    ?? _service.GetAllCommands()
-                                        .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd.Split(' ')[0]));
-            }
+                await _autoResponse.OnMessageReceivedAsync(args);
+                await _dad.OnMessageReceivedAsync(args);
+                await _reaction.OnMessageReceivedAsync(args);
+
+            });
+
+            _ = Task.Run(async () =>
+            {
+                var prefixes = new[] {Config.CommandPrefix, $"<@{args.Context.Client.CurrentUser.Id}> "};
+                if (CommandUtilities.HasAnyPrefix(args.Message.Content, prefixes, StringComparison.OrdinalIgnoreCase,
+                    out _,
+                    out var cmd))
+                {
+                    var sw = Stopwatch.StartNew();
+                    var res = await _service.ExecuteAsync(cmd, args.Context, DepressedBot.ServiceProvider);
+                    sw.Stop();
+                    if (res is CommandNotFoundResult) return;
+                    var targetCommand = _service.GetAllCommands()
+                                            .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd))
+                                        ?? _service.GetAllCommands()
+                                            .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd.Split(' ')[0]));
+                    await OnCommandAsync(targetCommand, res, args.Context, sw);
+                }
+            });
+
+            return Task.CompletedTask;
         }
 
         public async Task OnReady(ReadyEventArgs args)

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DepressedBot.Commands;
+﻿using DepressedBot.Commands;
 using Discord;
 using Discord.WebSocket;
 
@@ -12,9 +9,9 @@ namespace DepressedBot.Data.Objects.EventArgs
         public IUserMessage Message { get; }
         public DepressedBotContext Context { get; }
 
-        public MessageReceivedEventArgs(SocketMessage s)
+        public MessageReceivedEventArgs(SocketUserMessage s)
         {
-            Message = s as IUserMessage;
+            Message = s;
             Context = new DepressedBotContext(Discord.DepressedBot.Client, Message, Discord.DepressedBot.ServiceProvider);
         }
     }
