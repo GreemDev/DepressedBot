@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using DepressedBot.Commands;
 using DepressedBot.Data;
 using DepressedBot.Data.Objects;
 using DepressedBot.Data.Objects.EventArgs;
@@ -10,6 +11,7 @@ using DepressedBot.Extensions;
 using DepressedBot.Services;
 using Discord;
 using Discord.WebSocket;
+using Humanizer;
 using Qmmands;
 
 namespace DepressedBot.Discord
@@ -67,6 +69,19 @@ namespace DepressedBot.Discord
         {
             await _autoResponse.OnMessageReceivedAsync(args);
             await _dad.OnMessageReceivedAsync(args);
+            var prefixes = new[] {Config.CommandPrefix, $"<@{args.Context.Client.CurrentUser.Id}> "};
+            if (CommandUtilities.HasAnyPrefix(args.Message.Content, prefixes, StringComparison.OrdinalIgnoreCase, out _,
+                out var cmd))
+            {
+                var sw = Stopwatch.StartNew();
+                var res = await _service.ExecuteAsync(cmd, args.Context, DepressedBot.ServiceProvider);
+                sw.Stop();
+                if (res is CommandNotFoundResult) return;
+                var targetCommand = _service.GetAllCommands()
+                                        .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd))
+                                    ?? _service.GetAllCommands()
+                                        .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd.Split(' ')[0]));
+            }
         }
 
         public async Task OnReady(ReadyEventArgs args)
@@ -100,6 +115,105 @@ namespace DepressedBot.Discord
                 await args.Client.SetGameAsync(Config.Game, twitchUrl, ActivityType.Streaming);
                 await _logger.Log(LogSeverity.Info, LogSource.DepressedBot,
                     $"Set the bot's game to \"{ActivityType.Streaming} {Config.Game}, at {twitchUrl}\".");
+            }
+        }
+
+        public async Task OnCommandAsync(Command c, IResult res, ICommandContext context, Stopwatch sw)
+        {
+            var ctx = (DepressedBotContext)context;
+            var commandName = ctx.Message.Content.Split(" ")[0];
+            var args = ctx.Message.Content.Replace($"{commandName}", "");
+            if (string.IsNullOrEmpty(args)) args = "None";
+            if (res is FailedResult failedRes)
+            {
+                await OnCommandFailureAsync(c, failedRes, ctx, args, sw);
+                return;
+            }
+
+            if (Config.LogAllCommands)
+            {
+                await _logger.Log(LogSeverity.Info, LogSource.Module,
+                    $"|  -Command from user: {ctx.User.Username}#{ctx.User.Discriminator} ({ctx.User.Id})");
+                await _logger.Log(LogSeverity.Info, LogSource.Module,
+                    $"|     -Command Issued: {c.Name}");
+                await _logger.Log(LogSeverity.Info, LogSource.Module,
+                    $"|        -Args Passed: {args.Trim()}");
+                await _logger.Log(LogSeverity.Info, LogSource.Module,
+                    $"|           -In Guild: {ctx.Guild.Name} ({ctx.Guild.Id})");
+                await _logger.Log(LogSeverity.Info, LogSource.Module,
+                    $"|         -In Channel: #{ctx.Channel.Name} ({ctx.Channel.Id})");
+                await _logger.Log(LogSeverity.Info, LogSource.Module,
+                    $"|        -Time Issued: {DateTime.Now}");
+                await _logger.Log(LogSeverity.Info, LogSource.Module,
+                    $"|           -Executed: {res.IsSuccessful} ");
+                await _logger.Log(LogSeverity.Info, LogSource.Module,
+                    $"|              -After: {sw.Elapsed.Humanize()}");
+                await _logger.Log(LogSeverity.Info, LogSource.Module,
+                    "-------------------------------------------------");
+            }
+        }
+
+        private async Task OnCommandFailureAsync(Command c, FailedResult res, DepressedBotContext ctx, string args,
+            Stopwatch sw)
+        {
+            var embed = new EmbedBuilder();
+            string reason;
+            switch (res)
+            {
+                case CommandNotFoundResult _:
+                    reason = "Unknown command.";
+                    break;
+                case ExecutionFailedResult efr:
+                    reason = $"Execution of this command failed.\nFull error message: {efr.Exception.Message}";
+                    await _logger.Log(LogSeverity.Error, LogSource.Module, string.Empty, efr.Exception);
+                    break;
+                case ChecksFailedResult _:
+                    reason = "Insufficient permission.";
+                    break;
+                case ParameterChecksFailedResult pcfr:
+                    reason = $"Checks failed on parameter *{pcfr.Parameter.Name}**.";
+                    break;
+                case ArgumentParseFailedResult apfr:
+                    reason = $"Parsing for arguments failed on argument **{apfr.Parameter?.Name}**.";
+                    break;
+                case TypeParseFailedResult tpfr:
+                    reason =
+                        $"Failed to parse type **{tpfr.Parameter.Type.FullName}** from parameter **{tpfr.Parameter.Name}**.";
+                    break;
+                default:
+                    reason = "Unknown error.";
+                    break;
+            }
+
+            if (reason != "Insufficient permission." && reason != "Unknown command.")
+            {
+                await embed.AddField("Error in Command:", c.Name)
+                    .AddField("Error Reason:", reason)
+                    .AddField("Correct Usage", c.SanitizeUsage())
+                    .WithAuthor(ctx.User)
+                    .WithErrorColor()
+                    .SendToAsync(ctx.Channel);
+
+                if (!Config.LogAllCommands) return;
+
+                await _logger.Log(LogSeverity.Error, LogSource.Module,
+                    $"|  -Command from user: {ctx.User.Username}#{ctx.User.Discriminator} ({ctx.User.Id})");
+                await _logger.Log(LogSeverity.Error, LogSource.Module,
+                    $"|     -Command Issued: {c.Name}");
+                await _logger.Log(LogSeverity.Error, LogSource.Module,
+                    $"|        -Args Passed: {args.Trim()}");
+                await _logger.Log(LogSeverity.Error, LogSource.Module,
+                    $"|           -In Guild: {ctx.Guild.Name} ({ctx.Guild.Id})");
+                await _logger.Log(LogSeverity.Error, LogSource.Module,
+                    $"|         -In Channel: #{ctx.Channel.Name} ({ctx.Channel.Id})");
+                await _logger.Log(LogSeverity.Error, LogSource.Module,
+                    $"|        -Time Issued: {DateTime.Now}");
+                await _logger.Log(LogSeverity.Error, LogSource.Module,
+                    $"|           -Executed: {res.IsSuccessful} | Reason: {reason}");
+                await _logger.Log(LogSeverity.Error, LogSource.Module,
+                    $"|              -After: {sw.Elapsed.Humanize()}");
+                await _logger.Log(LogSeverity.Error, LogSource.Module,
+                    "-------------------------------------------------");
             }
         }
     }

@@ -6,13 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\Attributes\" />
     <Folder Include="Commands\Modules\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Colorful.Console" Version="1.2.9" />
     <PackageReference Include="Discord.Net" Version="2.0.1" />
+    <PackageReference Include="Humanizer.Core" Version="2.6.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="Qmmands" Version="2.3.0" />
   </ItemGroup>
