@@ -14,7 +14,6 @@ namespace DepressedBot.Services
     {
         public async Task OnMessageReceivedAsync(MessageReceivedEventArgs args)
         {
-            Console.WriteLine("reached dadservice");
             if (Config.IgnoredCategoryIds.Contains(args.Context.Channel.CategoryId ?? 0)) return;
             if (!ShouldReply(args.Message, out var resp)) return;
             var user = await args.Context.Guild.GetCurrentUserAsync();

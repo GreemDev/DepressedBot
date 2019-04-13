@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using DepressedBot.Data;
 using DepressedBot.Data.Objects.EventArgs;
@@ -12,10 +11,8 @@ namespace DepressedBot.Services
     {
         public async Task OnMessageReceivedAsync(MessageReceivedEventArgs args)
         {
-            Console.WriteLine("reached autoresponse");
             if (AutoResponses.Responses.Any(x => args.Message.Content.ContainsIgnoreCase(x.Phrase)))
             {
-                Console.WriteLine("reached autoresponse if");
                 var m = await args.Context.ReplyAsync(AutoResponses.Responses
                     .FirstOrDefault(x => args.Message.Content.ContainsIgnoreCase(x.Phrase)).Response);
                 await ExecutorUtil.ExecuteAfterDelayAsync(4000, async () => await m.DeleteAsync());

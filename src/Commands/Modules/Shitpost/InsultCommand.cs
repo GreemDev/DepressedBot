@@ -19,8 +19,8 @@ namespace DepressedBot.Commands.Modules.Shitpost
             var target = user ?? Context.User;
             var http = new RestClient("https://insult.mattbas.org/api/insult.json");
             var insult = JsonConvert.DeserializeObject(http.Execute(new RestRequest()).Content).Cast<JObject>()
-                .GetValue("insult");
-            await Context.ReplyAsync($"{target.Mention}, {insult}");
+                .GetValue("insult").ToString();
+            await Context.ReplyAsync($"{target.Mention}, {insult.ToLower()}.");
         }
     }
 }

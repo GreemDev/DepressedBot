@@ -75,7 +75,6 @@ namespace DepressedBot.Discord
             _ = Task.Run(async () => await _autoResponse.OnMessageReceivedAsync(args));
             _ = Task.Run(async () => await _dad.OnMessageReceivedAsync(args));
             _ = Task.Run(async () => await _reaction.OnMessageReceivedAsync(args));
-            Console.WriteLine("reached commandhandler");
             if (CommandUtilities.HasPrefix(args.Message.Content, '*', out var cmd))
             {
                 var sw = Stopwatch.StartNew();

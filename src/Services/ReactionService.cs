@@ -17,7 +17,6 @@ namespace DepressedBot.Services
 
         public async Task OnMessageReceivedAsync(MessageReceivedEventArgs args)
         {
-            Console.WriteLine("reached reactionservice");
             if (args.Message.Author.IsBot) return;
             var ctx = args.Context;
             if (ctx.Message.Content.ContainsIgnoreCase("lmao"))
