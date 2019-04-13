@@ -14,7 +14,6 @@ using Discord;
 using Discord.WebSocket;
 using Humanizer;
 using Qmmands;
-using Console = Colorful.Console;
 
 namespace DepressedBot.Discord
 {
@@ -29,13 +28,15 @@ namespace DepressedBot.Discord
         private readonly AutoResponseService _autoResponse;
         private readonly DadService _dad;
         private readonly ReactionService _reaction;
+        private readonly ModerationService _moderation;
 
         public DepressedHandler(DiscordSocketClient client,
             CommandService commandService,
             LoggingService loggingService,
             AutoResponseService autoResponseService,
             DadService dadService,
-            ReactionService reactionService)
+            ReactionService reactionService,
+            ModerationService moderationService)
         {
             _client = client;
             _service = commandService;
@@ -43,6 +44,7 @@ namespace DepressedBot.Discord
             _autoResponse = autoResponseService;
             _dad = dadService;
             _reaction = reactionService;
+            _moderation = moderationService;
         }
 
         public async Task InitializeAsync()
@@ -75,6 +77,8 @@ namespace DepressedBot.Discord
             _ = Task.Run(async () => await _autoResponse.OnMessageReceivedAsync(args));
             _ = Task.Run(async () => await _dad.OnMessageReceivedAsync(args));
             _ = Task.Run(async () => await _reaction.OnMessageReceivedAsync(args));
+            _ = Task.Run(async () => await _moderation.OnMessageReceivedAsync(args));
+
             if (CommandUtilities.HasPrefix(args.Message.Content, '*', out var cmd))
             {
                 var sw = Stopwatch.StartNew();

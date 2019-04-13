@@ -39,6 +39,10 @@ namespace DepressedBot.Services
             {
                 await ctx.ReactAsync(385908930598928405);
             }
+            else if (ctx.Message.Author.Id == 385899728283500546 && ctx.Message.Attachments.Count > 0)
+            {
+                await ctx.ReactAsync(408658306635268106);
+            }
         }
     }
 }
