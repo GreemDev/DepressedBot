@@ -20,7 +20,7 @@ namespace DepressedBot.Commands.Modules.BotOwner
     {
         [Command("Eval", "Evaluate")]
         [Description("Evaluates C# code.")]
-        [Usage("Usage: |prefix|eval {code}")]
+        [Usage("Usage: |prefix|eval [code]")]
         [RequireBotOwner]
         public async Task EvalAsync([Remainder] string code = "")
         {
