@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DepressedBot.Extensions;
 using DepressedBot.Services;
@@ -44,5 +45,7 @@ namespace DepressedBot.Commands
         public Task<IUserMessage> ReplyAsync(Embed embed) => embed.SendToAsync(Channel);
         public Task<IUserMessage> ReplyAsync(EmbedBuilder embed) => embed.SendToAsync(Channel);
         public Task ReactAsync(string unicode) => Message.AddReactionAsync(new Emoji(unicode));
+
+        public Task ReactAsync(ulong emoteId) => Message.AddReactionAsync(Guild.Emotes.FirstOrDefault(x => x.Id == emoteId));
     }
 }

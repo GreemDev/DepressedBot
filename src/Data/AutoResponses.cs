@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using DepressedBot.Data.Objects;
 using Newtonsoft.Json;
-using DepressedBot.Extensions;
+using Gommon;
 using DepressedBot.Services;
 using Discord;
 

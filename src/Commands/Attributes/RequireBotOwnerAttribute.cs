@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DepressedBot.Data;
-using DepressedBot.Extensions;
+using Gommon;
 using Qmmands;
 
 namespace DepressedBot.Commands.Attributes

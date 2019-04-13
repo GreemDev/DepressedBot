@@ -3,6 +3,7 @@ using DepressedBot.Commands.Attributes;
 using DepressedBot.Commands.TypeParsers;
 using DepressedBot.Data;
 using Discord.WebSocket;
+using Gommon;
 using Qmmands;
 
 namespace DepressedBot.Extensions
@@ -14,7 +15,7 @@ namespace DepressedBot.Extensions
 
         public static string SanitizeUsage(this Command c)
         {
-            var aliases = $"({string.Join("|", c.FullAliases)})";
+            var aliases = $"({c.FullAliases.Join('|')})";
             var attr = c.Attributes.FirstOrDefault(x => x is UsageAttribute).Cast<UsageAttribute>();
             return (attr?.Usage ?? "No usage provided")
                 .Replace(c.Name.ToLower(), (c.FullAliases.Count > 1 ? aliases : c.Name).ToLower())

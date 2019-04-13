@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using DepressedBot.Data;
 using DepressedBot.Data.Objects.EventArgs;
 using Discord;
+using Gommon;
+using Console = Colorful.Console;
 
 namespace DepressedBot.Services
 {
@@ -12,13 +14,12 @@ namespace DepressedBot.Services
     {
         public async Task OnMessageReceivedAsync(MessageReceivedEventArgs args)
         {
+            Console.WriteLine("reached dadservice");
             if (Config.IgnoredCategoryIds.Contains(args.Context.Channel.CategoryId ?? 0)) return;
-            if (ShouldReply(args.Message, out var resp))
-            {
-                var user = await args.Context.Guild.GetCurrentUserAsync();
-                var m = await args.Context.ReplyAsync($"Hi {resp}, I'm {user.Nickname ?? user.Username}!");
-                await Task.Delay(4000).ContinueWith(async _ => await m.DeleteAsync());
-            }
+            if (!ShouldReply(args.Message, out var resp)) return;
+            var user = await args.Context.Guild.GetCurrentUserAsync();
+            var m = await args.Context.ReplyAsync($"Hi {resp}, I'm {user.Nickname ?? user.Username}!");
+            await ExecutorUtil.ExecuteAfterDelayAsync(4000, async () => await m.DeleteAsync());
         }
 
         private bool ShouldReply(IMessage m, out string response)

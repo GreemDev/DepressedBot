@@ -7,12 +7,14 @@ using DepressedBot.Commands;
 using DepressedBot.Data;
 using DepressedBot.Data.Objects;
 using DepressedBot.Data.Objects.EventArgs;
-using DepressedBot.Extensions;
+using Gommon;
 using DepressedBot.Services;
+using DepressedBot.Extensions;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
 using Qmmands;
+using Console = Colorful.Console;
 
 namespace DepressedBot.Discord
 {
@@ -63,41 +65,30 @@ namespace DepressedBot.Discord
                     await dm.SendMessageAsync("I do not support commands via DM.");
                     return;
                 }
-
-                await HandleMessageReceivedAsync(new MessageReceivedEventArgs(msg));
+                var args = new MessageReceivedEventArgs(msg);
+                await HandleMessageReceivedAsync(args);
             };
         }
 
-        private Task HandleMessageReceivedAsync(MessageReceivedEventArgs args)
+        private async Task HandleMessageReceivedAsync(MessageReceivedEventArgs args)
         {
-            _ = Task.Run(async () =>
+            _ = Task.Run(async () => await _autoResponse.OnMessageReceivedAsync(args));
+            _ = Task.Run(async () => await _dad.OnMessageReceivedAsync(args));
+            _ = Task.Run(async () => await _reaction.OnMessageReceivedAsync(args));
+            Console.WriteLine("reached commandhandler");
+            if (CommandUtilities.HasPrefix(args.Message.Content, '*', out var cmd))
             {
-                await _autoResponse.OnMessageReceivedAsync(args);
-                await _dad.OnMessageReceivedAsync(args);
-                await _reaction.OnMessageReceivedAsync(args);
+                var sw = Stopwatch.StartNew();
+                var res = await _service.ExecuteAsync(cmd, args.Context, DepressedBot.ServiceProvider);
+                sw.Stop();
+                if (res is CommandNotFoundResult) return;
+                var targetCommand = _service.GetAllCommands()
+                                        .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd))
+                                    ?? _service.GetAllCommands()
+                                        .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd.Split(' ')[0]));
+                await OnCommandAsync(targetCommand, res, args.Context, sw);
 
-            });
-
-            _ = Task.Run(async () =>
-            {
-                var prefixes = new[] {Config.CommandPrefix, $"<@{args.Context.Client.CurrentUser.Id}> "};
-                if (CommandUtilities.HasAnyPrefix(args.Message.Content, prefixes, StringComparison.OrdinalIgnoreCase,
-                    out _,
-                    out var cmd))
-                {
-                    var sw = Stopwatch.StartNew();
-                    var res = await _service.ExecuteAsync(cmd, args.Context, DepressedBot.ServiceProvider);
-                    sw.Stop();
-                    if (res is CommandNotFoundResult) return;
-                    var targetCommand = _service.GetAllCommands()
-                                            .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd))
-                                        ?? _service.GetAllCommands()
-                                            .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd.Split(' ')[0]));
-                    await OnCommandAsync(targetCommand, res, args.Context, sw);
-                }
-            });
-
-            return Task.CompletedTask;
+            }
         }
 
         public async Task OnReady(ReadyEventArgs args)
@@ -136,7 +127,7 @@ namespace DepressedBot.Discord
 
         public async Task OnCommandAsync(Command c, IResult res, ICommandContext context, Stopwatch sw)
         {
-            var ctx = (DepressedBotContext)context;
+            var ctx = context.Cast<DepressedBotContext>();
             var commandName = ctx.Message.Content.Split(" ")[0];
             var args = ctx.Message.Content.Replace($"{commandName}", "");
             if (string.IsNullOrEmpty(args)) args = "None";

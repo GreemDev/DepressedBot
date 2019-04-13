@@ -1,8 +1,9 @@
-﻿using System.Runtime.InteropServices.ComTypes;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DepressedBot.Data;
 using DepressedBot.Data.Objects.EventArgs;
-using DepressedBot.Extensions;
+using Gommon;
 
 namespace DepressedBot.Services
 {
@@ -11,14 +12,13 @@ namespace DepressedBot.Services
     {
         public async Task OnMessageReceivedAsync(MessageReceivedEventArgs args)
         {
-            foreach (var resp in AutoResponses.Responses)
+            Console.WriteLine("reached autoresponse");
+            if (AutoResponses.Responses.Any(x => args.Message.Content.ContainsIgnoreCase(x.Phrase)))
             {
-                if (args.Message.Content.EqualsIgnoreCase(resp.Phrase) && resp.Enabled)
-                {
-                    var m = await args.Context.ReplyAsync(resp.Response);
-                    await Task.Delay(4000)
-                        .ContinueWith(async _ => await m.DeleteAsync());
-                }
+                Console.WriteLine("reached autoresponse if");
+                var m = await args.Context.ReplyAsync(AutoResponses.Responses
+                    .FirstOrDefault(x => args.Message.Content.ContainsIgnoreCase(x.Phrase)).Response);
+                await ExecutorUtil.ExecuteAfterDelayAsync(4000, async () => await m.DeleteAsync());
             }
         }
     }

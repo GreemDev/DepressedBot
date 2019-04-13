@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using DepressedBot.Commands.Attributes;
-using DepressedBot.Extensions;
+using Gommon;
 using Discord.WebSocket;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

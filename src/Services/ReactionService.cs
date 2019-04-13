@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Colorful;
 using DepressedBot.Data.Objects.EventArgs;
-using DepressedBot.Extensions;
-using Discord;
+using Gommon;
 
 namespace DepressedBot.Services
 {
@@ -9,16 +9,15 @@ namespace DepressedBot.Services
     public sealed class ReactionService
     {
         private readonly EmojiService _emoji;
-        private readonly LoggingService _logger;
 
-        public ReactionService(EmojiService emojiService, LoggingService loggingService)
+        public ReactionService(EmojiService emojiService)
         {
             _emoji = emojiService;
-            _logger = loggingService;
         }
 
         public async Task OnMessageReceivedAsync(MessageReceivedEventArgs args)
         {
+            Console.WriteLine("reached reactionservice");
             if (args.Message.Author.IsBot) return;
             var ctx = args.Context;
             if (ctx.Message.Content.ContainsIgnoreCase("lmao"))
@@ -36,6 +35,10 @@ namespace DepressedBot.Services
                 await ctx.ReactAsync(_emoji.REGIONAL_INDICATOR_F);
                 await ctx.ReactAsync(_emoji.REGIONAL_INDICATOR_A);
                 await ctx.ReactAsync(_emoji.REGIONAL_INDICATOR_O);
+            }
+            else if (ctx.Message.Content.ContainsIgnoreCase("fuck"))
+            {
+                await ctx.ReactAsync(385908930598928405);
             }
         }
     }

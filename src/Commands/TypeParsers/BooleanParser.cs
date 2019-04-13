@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using DepressedBot.Extensions;
+using Gommon;
 using Qmmands;
 
 namespace DepressedBot.Commands.TypeParsers

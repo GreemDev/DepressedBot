@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using DepressedBot.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Gommon;
 
 namespace DepressedBot.Extensions
 {

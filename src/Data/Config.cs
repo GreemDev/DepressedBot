@@ -1,4 +1,4 @@
-﻿using DepressedBot.Extensions;
+﻿using Gommon;
 using System.IO;
 using System.Threading.Tasks;
 using DepressedBot.Data.Objects;
@@ -37,6 +37,7 @@ namespace DepressedBot.Data
                 SuccessEmbedColor = 0x7000FB,
                 ErrorEmbedColor = 0xFF0000,
                 LogAllCommands = true,
+                IgnoredCategoryIds = new ulong[] {}
             };
             File.WriteAllText(ConfigFile,
                 JsonConvert.SerializeObject(_bot, Formatting.Indented));

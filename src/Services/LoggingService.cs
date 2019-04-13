@@ -3,11 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using DepressedBot.Data.Objects;
 using DepressedBot.Data.Objects.EventArgs;
-using DepressedBot.Extensions;
+using Gommon;
 using Discord;
 using Console = Colorful.Console;
 using Color = System.Drawing.Color;
-using LogMessage = Discord.LogMessage;
 
 namespace DepressedBot.Services
 {
