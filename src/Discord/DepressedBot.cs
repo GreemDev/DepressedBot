@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using DepressedBot.Data;
@@ -34,6 +35,7 @@ namespace DepressedBot.Discord
         {
             return new ServiceCollection()
                 .AddDepressedBotServices()
+                .AddSingleton<HttpClient>()
                 .AddSingleton<DepressedHandler>()
                 .AddSingleton(new CommandService(new CommandServiceConfiguration
                 {
