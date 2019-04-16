@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using DepressedBot.Commands.Attributes;
 using DepressedBot.Data.Objects;
@@ -22,7 +21,7 @@ namespace DepressedBot.Commands.Modules.BotOwner
         [Description("Evaluates C# code.")]
         [Usage("Usage: |prefix|eval [code]")]
         [RequireBotOwner]
-        public async Task EvalAsync([Remainder] string code = "")
+        public Task EvalAsync([Remainder] string code = "")
         {
             _ = ExecutorUtil.ExecuteAsync(async () =>
             {
@@ -112,6 +111,7 @@ namespace DepressedBot.Commands.Modules.BotOwner
                     await Logger.Log(LogSeverity.Error, LogSource.Module, string.Empty, e);
                 }
             });
+            return Task.CompletedTask;
         }
     }
 }

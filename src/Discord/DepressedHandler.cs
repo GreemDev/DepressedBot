@@ -86,7 +86,7 @@ namespace DepressedBot.Discord
                 sw.Stop();
                 if (res is CommandNotFoundResult) return;
                 var targetCommand = _service.GetAllCommands()
-                                        .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd))
+                                        .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd))   
                                     ?? _service.GetAllCommands()
                                         .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd.Split(' ')[0]));
                 await OnCommandAsync(targetCommand, res, args.Context, sw);
