@@ -17,13 +17,14 @@ namespace DepressedBot.Services
 
         internal async Task Log(LogEventArgs args)
         {
+            if (args.LogMessage.Discord.Message.Contains("Preemptive")) return;
             await Log(args.LogMessage.Internal.Severity, args.LogMessage.Internal.Source,
                 args.LogMessage.Internal.Message, args.LogMessage.Internal.Exception);
         }
 
         internal async Task PrintVersion()
         {
-            await Log(LogSeverity.Info, LogSource.DepressedBot, $"Currently running DepressedBot V1-Debug");
+            await Log(LogSeverity.Info, LogSource.DepressedBot, $"Currently running DepressedBot V{Version.FullVersion}");
         }
 
         public async Task Log(LogSeverity s, LogSource src, string message, Exception e = null)
@@ -33,7 +34,7 @@ namespace DepressedBot.Services
             _semaphore.Release();
         }
 
-        private void DoLog(LogSeverity s, LogSource src, string message, Exception e)
+        private void DoLog(LogSeverity s, LogSource src, string message, Exception e = null)
         {
             var (color, value) = VerifySeverity(s);
             Append($"{value} -> ", color);

@@ -13,6 +13,7 @@ namespace DepressedBot.Commands.Modules.BotOwner
         [Command("SetName")]
         [Description("Sets the username of the currently logged in account.")]
         [Usage("|prefix|setname {name}")]
+        [RequireBotOwner]
         public async Task SetNameAsync([Remainder]string name)
         {
             await Context.Client.CurrentUser.ModifyAsync(x => x.Username = name);

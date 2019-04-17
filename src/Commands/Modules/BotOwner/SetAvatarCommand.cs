@@ -16,6 +16,7 @@ namespace DepressedBot.Commands.Modules.BotOwner
         [Command("SetAvatar")]
         [Description("Sets the avatar of the currently logged in account.")]
         [Usage("|prefix|setavatar {url}")]
+        [RequireBotOwner]
         public async Task SetAvatarAsync(string url)
         {
             if (url.IsNullOrWhitespace() || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
