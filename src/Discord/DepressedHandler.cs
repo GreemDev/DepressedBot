@@ -29,6 +29,7 @@ namespace DepressedBot.Discord
         private readonly DadService _dad;
         private readonly ReactionService _reaction;
         private readonly ModerationService _moderation;
+        private readonly OwoService _owo;
 
         public DepressedHandler(DiscordSocketClient client,
             CommandService commandService,
@@ -36,7 +37,8 @@ namespace DepressedBot.Discord
             AutoResponseService autoResponseService,
             DadService dadService,
             ReactionService reactionService,
-            ModerationService moderationService)
+            ModerationService moderationService,
+            OwoService owoService)
         {
             _client = client;
             _service = commandService;
@@ -45,6 +47,7 @@ namespace DepressedBot.Discord
             _dad = dadService;
             _reaction = reactionService;
             _moderation = moderationService;
+            _owo = owoService;
         }
 
         public async Task InitializeAsync()
@@ -78,6 +81,7 @@ namespace DepressedBot.Discord
             _ = Task.Run(async () => await _dad.OnMessageReceivedAsync(args));
             _ = Task.Run(async () => await _reaction.OnMessageReceivedAsync(args));
             _ = Task.Run(async () => await _moderation.OnMessageReceivedAsync(args));
+            _ = Task.Run(async () => await _owo.OnMessageReceivedAsync(args));
 
             if (CommandUtilities.HasPrefix(args.Message.Content, '*', out var cmd))
             {
