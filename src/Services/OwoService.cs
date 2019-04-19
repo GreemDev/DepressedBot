@@ -8,7 +8,6 @@ namespace DepressedBot.Services
     [Service("OwO", "The main Service for OwO-ing your day. (please god end me)")]
     public sealed class OwoService
     {
-
         public async Task OnMessageReceivedAsync(MessageReceivedEventArgs args)
         {
             if (args.Message.Content.EqualsIgnoreCase("owo")
@@ -24,7 +23,7 @@ namespace DepressedBot.Services
 
     }
 
-    public sealed class BoolGenerator
+    internal sealed class BoolGenerator
     {
         private Random _rnd;
 
