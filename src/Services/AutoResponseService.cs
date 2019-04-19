@@ -12,7 +12,7 @@ namespace DepressedBot.Services
         public async Task OnMessageReceivedAsync(MessageReceivedEventArgs args)
         {
             if (Config.IgnoredCategoryIds.Contains(args.Context.Channel.CategoryId ?? 0)) return;
-            if (AutoResponses.Responses.Any(x => args.Message.Content.ContainsIgnoreCase(x.Phrase)))
+            if (AutoResponses.Responses.Any(x => args.Message.Content.EqualsIgnoreCase(x.Phrase)))
             {
                 var m = await args.Context.ReplyAsync(AutoResponses.Responses
                     .FirstOrDefault(x => args.Message.Content.ContainsIgnoreCase(x.Phrase)).Response);
