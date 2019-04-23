@@ -21,6 +21,7 @@ namespace DepressedBot.Services
             {
                 await args.Message.DeleteAsync();
             }
+
         }
 
         public async Task CheckMusicChannelsAsync(MessageReceivedEventArgs args)
