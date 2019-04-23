@@ -36,10 +36,9 @@ namespace DepressedBot.Commands
         public Task ReactSuccessAsync() => Message.AddReactionAsync(new Emoji(_emojiService.BALLOT_BOX_WITH_CHECK));
 
         public Embed CreateEmbed(string content) => new EmbedBuilder().WithSuccessColor().WithAuthor(User)
-            .WithDescription(content).Build();
+            .WithDescription(content ?? string.Empty).Build();
 
-        public EmbedBuilder CreateEmbedBuilder(string content = null) => new EmbedBuilder()
-            .WithSuccessColor().WithAuthor(User).WithDescription(content ?? string.Empty);
+        public EmbedBuilder CreateEmbedBuilder(string content = null) => CreateEmbed(content).ToEmbedBuilder();
 
         public Task<IUserMessage> ReplyAsync(string content) => Channel.SendMessageAsync(content);
         public Task<IUserMessage> ReplyAsync(Embed embed) => embed.SendToAsync(Channel);
