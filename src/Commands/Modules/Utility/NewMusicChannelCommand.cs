@@ -14,7 +14,7 @@ namespace DepressedBot.Commands.Modules.Utility
         [RequireAdmin]
         public async Task NewMusicChannelAsync(SocketGuildUser user, [Remainder]string name)
         {
-            var channel = await Context.Guild.CreateTextChannelAsync(name.Replace(" ", "-"), 
+            var channel = await Context.Guild.CreateTextChannelAsync(name.Replace(" ", "-").ToLower(), 
                 x => x.CategoryId = 542855804727066636);
             await channel.AddPermissionOverwriteAsync(user,
                 new OverwritePermissions(manageChannel: PermValue.Allow, manageMessages: PermValue.Allow,

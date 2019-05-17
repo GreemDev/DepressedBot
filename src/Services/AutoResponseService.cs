@@ -16,7 +16,7 @@ namespace DepressedBot.Services
             {
                 var m = await args.Context.ReplyAsync(AutoResponses.Responses
                     .FirstOrDefault(x => args.Message.Content.ContainsIgnoreCase(x.Phrase)).Response);
-                await ExecutorUtil.ExecuteAfterDelayAsync(4000, async () => await m.DeleteAsync());
+                await Executor.ExecuteAfterDelayAsync(4000, async () => await m.DeleteAsync());
             }
         }
     }

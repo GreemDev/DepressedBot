@@ -23,7 +23,7 @@ namespace DepressedBot.Commands.Modules.BotOwner
         [RequireBotOwner]
         public Task EvalAsync([Remainder] string code = "")
         {
-            _ = ExecutorUtil.ExecuteAsync(async () =>
+            _ = Executor.ExecuteAsync(async () =>
             {
                 try
                 {
