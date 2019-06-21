@@ -8,7 +8,7 @@ namespace DepressedBot.Services
     [Service("OwO", "The main Service for OwO-ing your day. (please god end me)")]
     public sealed class OwoService
     {
-        private DatabaseService _db;
+        private readonly DatabaseService _db;
 
         public OwoService(DatabaseService databaseService)
         {
@@ -20,7 +20,7 @@ namespace DepressedBot.Services
             if (args.Message.Content.EqualsIgnoreCase("owo")
                 || args.Message.Content.EqualsIgnoreCase("0w0"))
             {
-                int i = 0;
+                int i;
                 for (i = 2; NextBool(); i *= 2)
                     await args.Context.ReplyAsync($"owo (1/{i})");
 

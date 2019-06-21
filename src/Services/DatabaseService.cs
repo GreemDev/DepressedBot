@@ -8,7 +8,7 @@ using LiteDB;
 
 namespace DepressedBot.Services
 {
-    [Service("Database", "The main Service for handling DepressedBot's database.")]
+    [Service("Database", "The main Service for DepressedBot's database.")]
     public sealed class DatabaseService
     {
         public static readonly LiteDatabase Database = new LiteDatabase("storage/DepressedBot.db");
@@ -31,17 +31,15 @@ namespace DepressedBot.Services
         public void UpdateUser(DiscordUser newRecord)
         {
             var coll = Database.GetCollection<DiscordUser>("users");
-            coll.EnsureIndex(s => s.ObjId, true);
+            coll.EnsureIndex(s => s.Id, true);
             coll.Update(newRecord);
         } 
 
         private DiscordUser Create(ulong user)
-        {
-            return new DiscordUser
+            => new DiscordUser
             {
                 Id = user,
                 OwoScore = 0
             };
-        }
     }
 }
