@@ -24,13 +24,13 @@ namespace DepressedBot.Services
         {
             if (m.Content.StartsWith("i'm ", StringComparison.OrdinalIgnoreCase))
             {
-                response = m.Content.Remove(0, 4);
+                response = m.Content.Substring(3).Trim();
                 return true;
             }
 
             if (m.Content.StartsWith("im ", StringComparison.OrdinalIgnoreCase))
             {
-                response = m.Content.Remove(0, 3);
+                response = m.Content.Substring(3).Trim();
                 return true;
             }
 

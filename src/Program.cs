@@ -1,13 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace DepressedBot
 {
     internal class Program
     {
-        public static async Task Main()
-        {
-            await Discord.DepressedBot.StartAsync();
-        }
+        public static Task Main() => Discord.DepressedBot.StartAsync();
     }
 }

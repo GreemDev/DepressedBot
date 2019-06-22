@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Colorful;
 using DepressedBot.Data.Objects.EventArgs;
 using Gommon;
 
@@ -19,6 +18,16 @@ namespace DepressedBot.Services
         {
             if (args.Message.Author.IsBot) return;
             var ctx = args.Context;
+            if (ctx.Message.Content.ContainsIgnoreCase("cheese"))
+            {
+                var m = await ctx.ReplyAsync("🧀");
+                _ = Executor.ExecuteAfterDelayAsync(3000, async () =>
+                {
+                    await m.DeleteAsync();
+                    await ctx.ReactAsync("🧀");
+                });
+            }
+
             if (ctx.Message.Content.ContainsIgnoreCase("lmao"))
             {
                 await ctx.ReactAsync(_emoji.REGIONAL_INDICATOR_L);
@@ -38,10 +47,6 @@ namespace DepressedBot.Services
             else if (ctx.Message.Content.ContainsIgnoreCase("fuck"))
             {
                 await ctx.ReactAsync(385908930598928405);
-            }
-            else if (ctx.Message.Author.Id == 385899728283500546 && ctx.Message.Attachments.Count > 0)
-            {
-                await ctx.ReactAsync(408658306635268106);
             }
         }
     }
