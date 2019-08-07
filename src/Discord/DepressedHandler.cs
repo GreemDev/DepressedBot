@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -70,9 +71,24 @@ namespace DepressedBot.Discord
                     await dm.SendMessageAsync("I do not support commands via DM.");
                     return;
                 }
+
                 var args = new MessageReceivedEventArgs(msg);
                 await HandleMessageReceivedAsync(args);
             };
+
+            _ = Task.Run(async () =>
+            {
+                var file = File.OpenRead("storage/isopod.jpg");
+                var channel = _client.GetChannel(385902350956757005).Cast<SocketTextChannel>();
+                while (true)
+                {
+                    await Executor.ExecuteAfterDelayAsync(TimeSpan.FromHours(24), async () =>
+                    {
+                        await channel.SendFileAsync(file, "isopod.jpg", "It is yet again Isopod Hours.");
+                    });
+                }
+            });
+
         }
 
         private async Task HandleMessageReceivedAsync(MessageReceivedEventArgs args)
@@ -90,11 +106,10 @@ namespace DepressedBot.Discord
                 sw.Stop();
                 if (res is CommandNotFoundResult) return;
                 var targetCommand = _service.GetAllCommands()
-                                        .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd))   
+                                        .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd))
                                     ?? _service.GetAllCommands()
                                         .FirstOrDefault(x => x.FullAliases.ContainsIgnoreCase(cmd.Split(' ')[0]));
                 await OnCommandAsync(targetCommand, res, args.Context, sw);
-
             }
         }
 
@@ -104,7 +119,8 @@ namespace DepressedBot.Discord
             var users = args.Client.Guilds.SelectMany(x => x.Users).DistinctBy(x => x.Id).Count();
             var channels = args.Client.Guilds.SelectMany(x => x.Channels).DistinctBy(x => x.Id).Count();
 
-            await _logger.Log(LogSeverity.Info, LogSource.DepressedBot, $"Currently running DepressedBot V{Version.FullVersion}");
+            await _logger.Log(LogSeverity.Info, LogSource.DepressedBot,
+                $"Currently running DepressedBot V{Version.FullVersion}");
             await _logger.Log(LogSeverity.Info, LogSource.DepressedBot, "Use this URL to invite me to your servers:");
             await _logger.Log(LogSeverity.Info, LogSource.DepressedBot, $"{args.Client.GetInviteUrl(true)}");
             await _logger.Log(LogSeverity.Info, LogSource.DepressedBot, $"Logged in as {args.Client.CurrentUser}");
