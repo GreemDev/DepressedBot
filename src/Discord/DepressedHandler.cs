@@ -31,6 +31,7 @@ namespace DepressedBot.Discord
         private readonly ReactionService _reaction;
         private readonly ModerationService _moderation;
         private readonly OwoService _owo;
+        private readonly CountingService _counting;
 
         public DepressedHandler(DiscordSocketClient client,
             CommandService commandService,
@@ -39,7 +40,8 @@ namespace DepressedBot.Discord
             DadService dadService,
             ReactionService reactionService,
             ModerationService moderationService,
-            OwoService owoService)
+            OwoService owoService,
+            CountingService countingService)
         {
             _client = client;
             _service = commandService;
@@ -49,6 +51,7 @@ namespace DepressedBot.Discord
             _reaction = reactionService;
             _moderation = moderationService;
             _owo = owoService;
+            _counting = countingService;
         }
 
         public async Task InitializeAsync()
@@ -76,10 +79,11 @@ namespace DepressedBot.Discord
                 await HandleMessageReceivedAsync(args);
             };
 
-            _ = Task.Run(async () =>
+            _ = Executor.ExecuteAsync(async () =>
             {
                 var file = File.OpenRead("storage/isopod.jpg");
                 var channel = _client.GetChannel(385902350956757005).Cast<SocketTextChannel>();
+                await channel.SendFileAsync(file, "isopod.jpg", "It is yet again Isopod Hours.");
                 while (true)
                 {
                     await Executor.ExecuteAfterDelayAsync(TimeSpan.FromHours(24), async () =>
@@ -93,11 +97,12 @@ namespace DepressedBot.Discord
 
         private async Task HandleMessageReceivedAsync(MessageReceivedEventArgs args)
         {
-            _ = Task.Run(async () => await _autoResponse.OnMessageReceivedAsync(args));
-            _ = Task.Run(async () => await _dad.OnMessageReceivedAsync(args));
-            _ = Task.Run(async () => await _reaction.OnMessageReceivedAsync(args));
-            _ = Task.Run(async () => await _moderation.OnMessageReceivedAsync(args));
-            _ = Task.Run(async () => await _owo.OnMessageReceivedAsync(args));
+            _ = Executor.ExecuteAsync(async () => await _autoResponse.OnMessageReceivedAsync(args));
+            _ = Executor.ExecuteAsync(async () => await _dad.OnMessageReceivedAsync(args));
+            _ = Executor.ExecuteAsync(async () => await _reaction.OnMessageReceivedAsync(args));
+            _ = Executor.ExecuteAsync(async () => await _moderation.OnMessageReceivedAsync(args));
+            _ = Executor.ExecuteAsync(async () => await _owo.OnMessageReceivedAsync(args));
+            _ = Executor.ExecuteAsync(async () => await _counting.OnMessageReceivedAsync(args));
 
             if (CommandUtilities.HasPrefix(args.Message.Content, '*', out var cmd))
             {
@@ -125,13 +130,9 @@ namespace DepressedBot.Discord
             await _logger.Log(LogSeverity.Info, LogSource.DepressedBot, $"{args.Client.GetInviteUrl(true)}");
             await _logger.Log(LogSeverity.Info, LogSource.DepressedBot, $"Logged in as {args.Client.CurrentUser}");
             await _logger.Log(LogSeverity.Info, LogSource.DepressedBot, "Connected to:");
-            await _logger.Log(LogSeverity.Info, LogSource.DepressedBot,
-                $"    {guilds} server{(guilds.ShouldBePlural() ? "s" : "")}");
-            await _logger.Log(LogSeverity.Info, LogSource.DepressedBot,
-                $"    {users} user{(users.ShouldBePlural() ? "s" : "")}");
-
-            await _logger.Log(LogSeverity.Info, LogSource.DepressedBot,
-                $"    {channels} channel{(channels.ShouldBePlural() ? "s" : "")}");
+            await _logger.Log(LogSeverity.Info, LogSource.DepressedBot, $"    {"guild".ToQuantity(guilds)}");
+            await _logger.Log(LogSeverity.Info, LogSource.DepressedBot, $"    {"user".ToQuantity(users)}");
+            await _logger.Log(LogSeverity.Info, LogSource.DepressedBot, $"    {"channel".ToQuantity(channels)}");
 
 
             if (_shouldStream)
