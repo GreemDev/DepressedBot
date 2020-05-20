@@ -79,20 +79,6 @@ namespace DepressedBot.Discord
                 await HandleMessageReceivedAsync(args);
             };
 
-            _ = Executor.ExecuteAsync(async () =>
-            {
-                var file = File.OpenRead("storage/isopod.jpg");
-                var channel = _client.GetChannel(385902350956757005).Cast<SocketTextChannel>();
-                await channel.SendFileAsync(file, "isopod.jpg", "It is yet again Isopod Hours.");
-                while (true)
-                {
-                    await Executor.ExecuteAfterDelayAsync(TimeSpan.FromHours(24), async () =>
-                    {
-                        await channel.SendFileAsync(file, "isopod.jpg", "It is yet again Isopod Hours.");
-                    });
-                }
-            });
-
         }
 
         private async Task HandleMessageReceivedAsync(MessageReceivedEventArgs args)

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using DepressedBot.Data;
 using DepressedBot.Data.Objects.EventArgs;
 using Discord;
 using Gommon;
@@ -12,6 +13,7 @@ namespace DepressedBot.Services
         {
             await CheckRulesChannelAsync(args);
             await CheckMusicChannelsAsync(args);
+            await CheckTheChannelAsync(args);
         }
 
         private async Task CheckRulesChannelAsync(MessageReceivedEventArgs args)
@@ -21,7 +23,6 @@ namespace DepressedBot.Services
             {
                 await args.Message.DeleteAsync();
             }
-
         }
 
         public async Task CheckMusicChannelsAsync(MessageReceivedEventArgs args)
@@ -32,9 +33,25 @@ namespace DepressedBot.Services
             {
                 await args.Message.DeleteAsync(new RequestOptions
                 {
-                    AuditLogReason = "Automatically deleted because the user in question's ID was not in the channel topic."
+                    AuditLogReason =
+                        "Automatically deleted because the user in question's ID was not in the channel topic."
                 });
             }
+        }
+
+        public async Task CheckTheChannelAsync(MessageReceivedEventArgs args)
+        {
+            if (args.Context.Channel.Id != 709265065328771134) return;
+            if (args.Context.Message.Author.Id == Config.Owner || args.Context.Message.Author.Id == 274669099303305216)
+            {
+                return;
+            }
+
+            await args.Message.DeleteAsync(new RequestOptions
+            {
+                AuditLogReason =
+                    "Automatically deleted because this message was sent in The Channel and it wasn't sent by either Evan."
+            });
         }
     }
 }
