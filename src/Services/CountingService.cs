@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using DepressedBot.Data.Objects.EventArgs;
 using Discord;
-using Gommon;
 
 namespace DepressedBot.Services
 {
@@ -37,8 +35,8 @@ namespace DepressedBot.Services
         private async Task DoDeleteAsync(MessageReceivedEventArgs args)
         {
             await args.Message.DeleteAsync();
-            var m = await args.Context.ReplyAsync($"{args.Message.Author.Mention}, only send numbers in this channel, that are exactly +1 of the previous number, and you are not the sender of the previous number.");
-            _ = Executor.ExecuteAfterDelayAsync(TimeSpan.FromSeconds(3), () => m.DeleteAsync());
+            await args.Context.User.SendMessageAsync(
+                "Only send numbers in the counting channel that are exactly +1 of the previous number, and you are not the sender of the previous number.");
         }
     }
 }
