@@ -32,6 +32,7 @@ namespace DepressedBot.Discord
         private readonly ModerationService _moderation;
         private readonly OwoService _owo;
         private readonly CountingService _counting;
+        private readonly ConfessionalService _confessional;
 
         public DepressedHandler(DiscordSocketClient client,
             CommandService commandService,
@@ -41,7 +42,8 @@ namespace DepressedBot.Discord
             ReactionService reactionService,
             ModerationService moderationService,
             OwoService owoService,
-            CountingService countingService)
+            CountingService countingService,
+            ConfessionalService confessionalService)
         {
             _client = client;
             _service = commandService;
@@ -52,6 +54,7 @@ namespace DepressedBot.Discord
             _moderation = moderationService;
             _owo = owoService;
             _counting = countingService;
+            _confessional = confessionalService;
         }
 
         public async Task InitializeAsync()
@@ -71,12 +74,22 @@ namespace DepressedBot.Discord
                 if (msg.Author.IsBot) return;
                 if (msg.Channel is IDMChannel dm)
                 {
+                    if (msg.Content.StartsWith("*confess", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return;
+                    }
                     await dm.SendMessageAsync("I do not support commands via DM.");
                     return;
                 }
 
                 var args = new MessageReceivedEventArgs(msg);
                 await HandleMessageReceivedAsync(args);
+            };
+            _client.MessageReceived += async (s) =>
+            {
+                if (!(s is SocketUserMessage msg)) return;
+                if (msg.Author.IsBot) return;
+                await _confessional.HandleMessageAsync(msg);
             };
 
         }
