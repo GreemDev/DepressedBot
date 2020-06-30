@@ -33,6 +33,7 @@ namespace DepressedBot.Discord
         private readonly OwoService _owo;
         private readonly CountingService _counting;
         private readonly ConfessionalService _confessional;
+        private readonly IServiceProvider _provider;
 
         public DepressedHandler(DiscordSocketClient client,
             CommandService commandService,
@@ -43,7 +44,8 @@ namespace DepressedBot.Discord
             ModerationService moderationService,
             OwoService owoService,
             CountingService countingService,
-            ConfessionalService confessionalService)
+            ConfessionalService confessionalService,
+            IServiceProvider serviceProvider)
         {
             _client = client;
             _service = commandService;
@@ -55,6 +57,7 @@ namespace DepressedBot.Discord
             _owo = owoService;
             _counting = countingService;
             _confessional = confessionalService;
+            _provider = serviceProvider;
         }
 
         public async Task InitializeAsync()
@@ -74,7 +77,7 @@ namespace DepressedBot.Discord
                 if (msg.Author.IsBot) return;
                 if (msg.Channel is IDMChannel dm)
                 {
-                    if (msg.Content.StartsWith("*confess", StringComparison.OrdinalIgnoreCase))
+                    if (msg.Content.StartsWith($"{Config.CommandPrefix}confess", StringComparison.OrdinalIgnoreCase))
                     {
                         return;
                     }
@@ -89,7 +92,7 @@ namespace DepressedBot.Discord
             {
                 if (!(s is SocketUserMessage msg)) return;
                 if (msg.Author.IsBot) return;
-                await _confessional.HandleMessageAsync(msg);
+                await _confessional.HandleMessageAsync(new DepressedBotContext(_client, msg, _provider));
             };
 
         }
@@ -103,7 +106,7 @@ namespace DepressedBot.Discord
             _ = Executor.ExecuteAsync(async () => await _owo.OnMessageReceivedAsync(args));
             _ = Executor.ExecuteAsync(async () => await _counting.OnMessageReceivedAsync(args));
 
-            if (CommandUtilities.HasPrefix(args.Message.Content, '*', out var cmd))
+            if (CommandUtilities.HasPrefix(args.Message.Content, Config.CommandPrefix, out var cmd))
             {
                 var sw = Stopwatch.StartNew();
                 var res = await _service.ExecuteAsync(cmd, args.Context, DepressedBot.ServiceProvider);
