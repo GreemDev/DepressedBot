@@ -15,10 +15,10 @@ namespace DepressedBot.Commands.Modules.Shitpost
         [Usage("|prefix|meme")]
         public async Task MemeAsync()
         {
-            var http = new RestClient("https://some-random-api.ml/meme");
+            var http = new RestClient("https://meme-api.herokuapp.com/gimme");
             var resp = JsonConvert.DeserializeObject<JObject>(http.Execute(new RestRequest()).Content);
-            await Context.CreateEmbedBuilder().WithTitle($"{resp.GetValue("caption")}")
-                .WithImageUrl($"{resp.GetValue("image")}").SendToAsync(Context.Channel);
+            await Context.CreateEmbedBuilder().WithTitle($"r/{resp.GetValue("subreddit")} | {resp.GetValue("title")}")
+                .WithImageUrl($"{resp.GetValue("url")}").SendToAsync(Context.Channel);
 
         }
     }
