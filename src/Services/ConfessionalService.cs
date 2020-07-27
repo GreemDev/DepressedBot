@@ -4,6 +4,7 @@ using DepressedBot.Commands;
 using DepressedBot.Data;
 using Discord;
 using Discord.WebSocket;
+using Gommon;
 
 namespace DepressedBot.Services
 {
@@ -18,7 +19,7 @@ namespace DepressedBot.Services
             {
                 var confession = ctx.Message.Content.Replace($"{Config.CommandPrefix}confess", "",
                     StringComparison.OrdinalIgnoreCase);
-                if (confession.Equals(string.Empty))
+                if (confession.IsNullOrEmpty())
                 {
                     await ctx.Message.Channel.SendMessageAsync("You didn't confess anything.");
                     return;

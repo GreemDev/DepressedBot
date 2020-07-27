@@ -20,7 +20,7 @@ namespace DepressedBot.Commands.Modules.Utility
                 new OverwritePermissions(manageChannel: PermValue.Allow, manageMessages: PermValue.Allow,
                     viewChannel: PermValue.Allow, sendMessages: PermValue.Allow));
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole,
-                new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Deny));
+                new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Allow));
 
             await channel.SendMessageAsync($"Welcome to your personal music channel, {user.Mention}! " +
                                            "Feel free to post whatever music you like here. " +

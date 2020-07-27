@@ -12,34 +12,17 @@ namespace DepressedBot.Commands.Modules.Shitpost
         [Usage("|prefix|today")]
         public async Task TodayAsync()
         {
-            string m;
-            switch (DateTime.Now.DayOfWeek)
+            string m = DateTime.Now.DayOfWeek switch
             {
-                case DayOfWeek.Sunday:
-                    m = "it's fucking suday. god.";
-                    break;
-                case DayOfWeek.Monday:
-                    m = "it's fucking moday. god.";
-                    break;
-                case DayOfWeek.Tuesday:
-                    m = "it's fucking tueaday. god.";
-                    break;
-                case DayOfWeek.Wednesday:
-                    m = "it's fucking weaday. god.";
-                    break;
-                case DayOfWeek.Thursday:
-                    m = "it's fucking thuday. god.";
-                    break;
-                case DayOfWeek.Friday:
-                    m = "it's fucking friaday. god.";
-                    break;
-                case DayOfWeek.Saturday:
-                    m = "it's fucking satuaday. god.";
-                    break;
-                default:
-                    m = "apparently it's the eighth day of the week. god.";
-                    break;
-            }
+                DayOfWeek.Sunday => "it's fucking suday. god.",
+                DayOfWeek.Monday => "it's fucking moday. god.",
+                DayOfWeek.Tuesday => "it's fucking tueaday. god.",
+                DayOfWeek.Wednesday => "it's fucking weaday. god.",
+                DayOfWeek.Thursday => "it's fucking thuday. god.",
+                DayOfWeek.Friday => "it's fucking friaday. god.",
+                DayOfWeek.Saturday => "it's fucking satuaday. god.",
+                _ => "apparently it's the eighth day of the week. god."
+            };
 
             await Context.ReplyAsync(m);
         }

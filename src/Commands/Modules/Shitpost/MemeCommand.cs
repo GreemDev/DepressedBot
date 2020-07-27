@@ -17,8 +17,8 @@ namespace DepressedBot.Commands.Modules.Shitpost
         {
             var http = new RestClient("https://some-random-api.ml/meme");
             var resp = JsonConvert.DeserializeObject<JObject>(http.Execute(new RestRequest()).Content);
-            await Context.CreateEmbedBuilder().WithTitle($"{resp.GetValue("text")}")
-                .WithImageUrl($"{resp.GetValue("url")}").SendToAsync(Context.Channel);
+            await Context.CreateEmbedBuilder().WithTitle($"{resp.GetValue("caption")}")
+                .WithImageUrl($"{resp.GetValue("image")}").SendToAsync(Context.Channel);
 
         }
     }

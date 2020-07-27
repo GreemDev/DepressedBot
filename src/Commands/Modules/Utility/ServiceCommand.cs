@@ -17,9 +17,9 @@ namespace DepressedBot.Commands.Modules.Utility
         [Usage("|prefix|service {name}")]
         public async Task ServiceAsync([Remainder] string name = "")
         {
-            var services = Assembly.GetEntryAssembly().GetTypes()
+            var services = Assembly.GetEntryAssembly()?.GetTypes()
                 .Where(x => x.HasAttribute<ServiceAttribute>()).ToArray();
-            var type = services.FirstOrDefault(x => x.Name.ContainsIgnoreCase(name));
+            var type = services?.FirstOrDefault(x => x.Name.ContainsIgnoreCase(name));
             if (type is null)
             {
                 await Context.CreateEmbed($"{EmojiService.X} Service not found.").SendToAsync(Context.Channel);
