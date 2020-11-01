@@ -49,6 +49,7 @@ namespace DepressedBot.Discord
                 .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
                 {
                     LogLevel = LogSeverity.Verbose,
+                    GatewayIntents = GetIntents(),
                     AlwaysDownloadUsers = true,
                     ConnectionTimeout = 10000,
                     MessageCacheSize = 50
@@ -58,6 +59,12 @@ namespace DepressedBot.Discord
 
         public static Task StartAsync() 
             => new DepressedBot().LoginAsync();
+        
+        public static GatewayIntents GetIntents()
+        {
+            return GatewayIntents.Guilds | GatewayIntents.GuildMessageReactions | GatewayIntents.GuildMembers |
+                   GatewayIntents.GuildMessages | GatewayIntents.GuildPresences;
+        }
 
         private async Task LoginAsync()
         {
